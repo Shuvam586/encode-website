@@ -75,26 +75,35 @@ function modelCall(context, prompt) {
         const element = document.getElementById('chat-window'); // Select your element
 element.scrollTop = element.scrollHeight; 
             
-            textSpeech(data.response);
+            plswork(data.response);
         })
         .catch(error => {
             console.error('There was a problem with the fetch operation:', error);
         });
 }
 
-function textSpeech(text) {
+const plswork = (text) => {
     const options = {
         method: 'POST',
         mode: 'no-cors',
-        headers: { Authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzgyODljYTQzNjMwNGZhZDUwNmZiYzAiLCJrZXlOYW1lIjoiZW5jb2RlIiwiaWF0IjoxNzM2NzU4MjE0fQ.-kRBdbj6R6sHCOEhTIS87WjeYigNiAdMaiCW7FOJXDI', 'Content-Type': 'application/json' },
-        body: `{"voice_id":"emily","text":"${text}","speed":1,"sample_rate":24000,"add_wav_header":true}`
+        headers: {
+            Authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2Nzg2OWI3MDQzNjMwNGZhZDUwOGFhMTciLCJ0eXBlIjoiYXBpS2V5IiwiaWF0IjoxNzM2ODc0ODY0LCJleHAiOjQ4OTI2MzQ4NjR9.8Pfa_yl6-HIbjbuzxj59tG24NYXUZBwtpJfCiGQBu6I', 'Content-Type': 'application/json'
+        },
+        body: `{"text":"${text}","voice_id":"jasmine", "add_wav_header": true}`
     };
 
     fetch('https://waves-api.smallest.ai/api/v1/lightning/get_speech', options)
-        // .then(response => response.json())
-        .then(response => console.log(response))
-        .catch(err => console.log(err));
-}
+    .then(response => response.blob())
+    .then( blob => {
+        console.log(blob.type);
+        var file = window.URL.createObjectURL(blob);
+        // window.location.assign(file);
+        var audio = new Audio(file);
+        audio.play();
+
+    })
+    .catch(err => console.error(err));
+    }
 
 modelCall('', 'hi');
 
